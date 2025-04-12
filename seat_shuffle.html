@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ランダム席替え</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 1em;
+      background: #f4f4f4;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      padding: 1em;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    label {
+      display: block;
+      margin: 0.5em 0 0.2em;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.5em;
+      font-size: 1em;
+    }
+
+    button {
+      margin-top: 1em;
+      width: 100%;
+      padding: 0.7em;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1em;
+    }
+
+    td {
+      border: 1px solid #333;
+      padding: 0.8em 0;
+      text-align: center;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>ランダム席替え</h2>
+    <label for="rows">行数</label>
+    <input type="number" id="rows" value="5">
+
+    <label for="cols">列数</label>
+    <input type="number" id="cols" value="6">
+
+    <label for="students">生徒数</label>
+    <input type="number" id="students" value="30">
+
+    <button onclick="shuffle()">席替え開始</button>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    function shuffle() {
+      const rows = parseInt(document.getElementById('rows').value);
+      const cols = parseInt(document.getElementById('cols').value);
+      const totalSeats = rows * cols;
+      const students = parseInt(document.getElementById('students').value);
+
+      if (students > totalSeats) {
+        alert("席数より生徒数が多いです！");
+        return;
+      }
+
+      // 番号を1〜生徒数まで生成してシャッフル
+      let numbers = Array.from({length: students}, (_, i) => i + 1);
+      numbers = numbers.sort(() => Math.random() - 0.5);
+
+      // 空席を追加
+      while (numbers.length < totalSeats) {
+        numbers.push("");
+      }
+
+      // 表を生成
+      let html = "<table>";
+      for (let r = 0; r < rows; r++) {
+        html += "<tr>";
+        for (let c = 0; c < cols; c++) {
+          const idx = r * cols + c;
+          html += `<td>${numbers[idx] || " "}</td>`;
+        }
+        html += "</tr>";
+      }
+      html += "</table>";
+
+      document.getElementById("result").innerHTML = html;
+    }
+  </script>
+</body>
+</html>
