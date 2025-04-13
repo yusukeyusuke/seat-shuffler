@@ -54,19 +54,41 @@
       text-align: center;
       font-size: 1.2em;
     }
+
+    .empty-seat {
+      background: repeating-linear-gradient(
+        45deg,
+        #ccc,
+        #ccc 4px,
+        #fff 4px,
+        #fff 8px
+      );
+    }
+
+    .teacher-desk {
+      text-align: center;
+      font-weight: bold;
+      margin: 0.5em auto 0;
+      font-size: 1.1em;
+      border: 2px solid #333;
+      padding: 0.5em;
+      border-radius: 6px;
+      background-color: #eee;
+      width: 20%;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h2>ランダム席替え</h2>
     <label for="rows">行数</label>
-    <input type="number" id="rows" value="5">
+    <input type="number" id="rows" value="6">
 
     <label for="cols">列数</label>
     <input type="number" id="cols" value="6">
 
     <label for="students">生徒数</label>
-    <input type="number" id="students" value="30">
+    <input type="number" id="students" value="33">
 
     <button onclick="shuffle()">席替え開始</button>
 
@@ -85,29 +107,40 @@
         return;
       }
 
-      // 番号を1〜生徒数まで生成してシャッフル
       let numbers = Array.from({length: students}, (_, i) => i + 1);
       numbers = numbers.sort(() => Math.random() - 0.5);
 
-      // 空席を追加
-      while (numbers.length < totalSeats) {
-        numbers.push("");
+      const seats = Array.from({length: rows}, () => Array(cols).fill(""));
+      let i = 0;
+      outer: for (let c = cols - 1; c >= 0; c--) {
+        for (let r = rows - 1; r >= 0; r--) {
+          if (i < numbers.length) {
+            seats[r][c] = numbers[i++];
+          } else {
+            break outer;
+          }
+        }
       }
 
-      // 表を生成
       let html = "<table>";
       for (let r = 0; r < rows; r++) {
         html += "<tr>";
         for (let c = 0; c < cols; c++) {
-          const idx = r * cols + c;
-          html += `<td>${numbers[idx] || " "}</td>`;
+          const val = seats[r][c];
+          const className = val === "" ? " class='empty-seat'" : "";
+          html += `<td${className}>${val || " "}</td>`;
         }
         html += "</tr>";
       }
       html += "</table>";
+      html += '<div class="teacher-desk">教卓</div>';
 
       document.getElementById("result").innerHTML = html;
     }
+  </script>
+</body>
+</html>
+
   </script>
 </body>
 </html>
